@@ -1,3 +1,6 @@
+# gold_graph.py 참고
+# position 변수에 맞는 특정 포지션의 불루팀과 레드팀의 그래프를 비교
+
 import json
 
 from gold_win_loss import to_extract, total_blue
@@ -42,6 +45,8 @@ red_score = []
 to_extract = "totalGold"
 frames = timeline['frames']
 
+position = "MIDDLE"
+
 for frame in frames:
     time = frame['timestamp'] // 60000
     minutes.append(time)
@@ -62,10 +67,12 @@ for frame in frames:
     blue_score_1min, red_score_1min = 0, 0
     for pid, item in frame['participantFrames'].items():
         if int(pid) in blue_team:
-            blue_score_1min += item[to_extract]
+            if blue_team[int(pid)] == position : blue_score_1min += item[to_extract]
+            #blue_score_1min += item[to_extract]
             print(f"time = {time:2d}, pid = {pid:2s}, team=blue, score={item[to_extract]}")
         else:
-            red_score_1min += item[to_extract]
+            if red_team[int(pid)] == position : red_score_1min += item[to_extract]
+            #red_score_1min += item[to_extract]
             print(f"time = {time:2d}, pid = {pid:2s}, team=red, score={item[to_extract]}")
 
     print(f"blue = {blue_score_1min}, red = {red_score_1min}")
@@ -86,7 +93,7 @@ plt.plot(minutes, red_score, label=f"red: {to_extract}", marker="o", linewidth=2
 
 plt.xlabel("Minutes (m)")
 plt.ylabel(f"Team {to_extract}")
-plt.title(f"Feature {to_extract} graph")
+plt.title(f"Feature {to_extract}, {position} graph")
 plt.legend()
 plt.grid(True)
 plt.show()
